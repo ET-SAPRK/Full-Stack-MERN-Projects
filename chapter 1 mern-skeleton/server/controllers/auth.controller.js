@@ -6,13 +6,14 @@ import expressJwt from "express-jwt";
 const signin = async (req, res) => {
   try {
     let user = await User.findOne({ email: req.body.email });
-    if (!user) return res.status("401").json({ error: "User not found" });
+    if (!user) return res.status(401).json({ error: "User not found" });
     if (!user.authenticate(req.body.password)) {
-      return res
-        .status("401")
-        .send({ error: "Email and password don't match." });
+      return res.status(401).send({ error: "Email and password don't match." });
     }
-    const token = jwt.sign({ _id: user._id }, process.env.jwtSecret);
+
+    // Use the JWT secret key from the environment variable
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
+
     res.cookie("t", token, { expire: new Date() + 9999 });
     return res.json({
       token,
@@ -23,7 +24,7 @@ const signin = async (req, res) => {
       },
     });
   } catch (err) {
-    return res.status("401").json({ error: "Could not sign in" });
+    return res.status(401).json({ error: "Could not sign in" });
   }
 };
 
@@ -35,7 +36,7 @@ const signout = (req, res) => {
 };
 
 const requireSignin = expressJwt({
-  secret: process.env.jwtSecret,
+  secret: process.env.JWT_SECRET, // Use the JWT secret key from the environment variable
   userProperty: "auth",
 });
 
@@ -49,4 +50,4 @@ const hasAuthorization = (req, res, next) => {
   next();
 };
 
-export default { signin, signout, requireSignin, hasAuthorization };
+export default { signin, signout, hasAuthorization, requireSignin };
