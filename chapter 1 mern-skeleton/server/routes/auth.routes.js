@@ -1,6 +1,6 @@
 import express from "express";
 import authCtrl from "../controllers/auth.controller.js";
-import authCtrl from "../controllers/auth.controller.js";
+import userCtrl from "../controllers/user.controller.js";
 
 const router = express.Router();
 router.route("/auth/signin").post(authCtrl.signin);

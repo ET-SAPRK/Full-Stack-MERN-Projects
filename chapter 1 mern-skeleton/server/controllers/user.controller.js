@@ -1,6 +1,6 @@
 import User from "../models/user.model.js";
-import extend from "lodash/extend";
-import errorHandler from "./error.controller";
+import extend from "lodash/extend.js";
+import errorHandler from "./../helpers/dbErrorHandler.js";
 
 const create = async (req, res) => {
   const user = new User(req.body);
@@ -16,17 +16,9 @@ const create = async (req, res) => {
   }
 };
 
-const list = async (req, res) => {
-  try {
-    let users = await User.find().select("name email updated created");
-    res.json(users);
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
-  }
-};
-
+/**
+ * Load user and append to req.
+ */
 const userByID = async (req, res, next, id) => {
   try {
     let user = await User.findById(id);
@@ -47,6 +39,17 @@ const read = (req, res) => {
   req.profile.hashed_password = undefined;
   req.profile.salt = undefined;
   return res.json(req.profile);
+};
+
+const list = async (req, res) => {
+  try {
+    let users = await User.find().select("name email updated created");
+    res.json(users);
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err),
+    });
+  }
 };
 
 const update = async (req, res) => {
@@ -79,4 +82,11 @@ const remove = async (req, res) => {
   }
 };
 
-export default { create, userByID, read, list, remove, update };
+export default {
+  create,
+  userByID,
+  read,
+  list,
+  remove,
+  update,
+};

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import crypto from "crypto";
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -63,4 +64,4 @@ UserSchema.path("hashed_password").validate(function (v) {
   }
 }, null);
 
-export default mongoose("User", UserSchema);
+export default mongoose.model("User", UserSchema);
